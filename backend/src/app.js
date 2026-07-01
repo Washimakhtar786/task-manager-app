@@ -1,17 +1,22 @@
 import express from "express";
 import cors from "cors";
+import env from "./config/env.js";
 
 const app = express();
 
-// Middleware
-app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: env.frontendUrl,
+    credentials: true,
+  })
+);
 
-// Health Check Route
+app.use(express.json());
+
 app.get("/api/health", (req, res) => {
   res.status(200).json({
     success: true,
-    message: "Task Manager API is running"
+    message: "Task Manager API is running",
   });
 });
 
