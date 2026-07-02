@@ -1,6 +1,9 @@
 import {
   createTask,
-  getUserTasks
+  getUserTasks,
+  getTaskById,
+  updateTask,
+  deleteTask
 } from "../services/task.service.js";
 
 import { sendSuccess } from "../utils/response.js";
@@ -33,5 +36,45 @@ export async function getMyTasks(req, res) {
       tasks,
       total: tasks.length
     }
+  });
+}
+
+export async function getMyTaskById(req, res) {
+  const task = await getTaskById({
+    taskId: req.taskId,
+    userId: req.user.id
+  });
+
+  return sendSuccess(res, {
+    message: "Task retrieved successfully",
+    data: {
+      task
+    }
+  });
+}
+
+export async function updateMyTask(req, res) {
+  const task = await updateTask({
+    taskId: req.taskId,
+    userId: req.user.id,
+    updates: req.validatedData
+  });
+
+  return sendSuccess(res, {
+    message: "Task updated successfully",
+    data: {
+      task
+    }
+  });
+}
+
+export async function deleteMyTask(req, res) {
+  await deleteTask({
+    taskId: req.taskId,
+    userId: req.user.id
+  });
+
+  return sendSuccess(res, {
+    message: "Task deleted successfully"
   });
 }

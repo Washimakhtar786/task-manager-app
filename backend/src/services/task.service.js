@@ -1,17 +1,8 @@
 import { Task } from "../domain/index.js";
+import AppError from "../errors/app-error.js";
+import { createSafeTaskResponse } from "../utils/task-response.js";
 
-function createSafeTaskResponse(task) {
-  return {
-    id: task.id,
-    title: task.title,
-    description: task.description,
-    status: task.status,
-    dueDate: task.dueDate,
-    userId: task.userId,
-    createdAt: task.createdAt,
-    updatedAt: task.updatedAt
-  };
-}
+
 
 export async function createTask({
   userId,
@@ -48,4 +39,78 @@ export async function getUserTasks({
   });
 
   return tasks.map(createSafeTaskResponse);
+}
+
+export async function getTaskById({
+  taskId,
+  userId
+}) {
+  const task = await Task.findByPk(taskId);
+
+  if (!task) {
+    throw new AppError(
+      "Task not found",
+      404
+    );
+  }
+
+  if (task.userId !== userId) {
+    throw new AppError(
+      "You do not have permission to access this task",
+      403
+    );
+  }
+
+  return createSafeTaskResponse(task);
+}
+
+export async function updateTask({
+  taskId,
+  userId,
+  updates
+}) {
+  const task = await Task.findByPk(taskId);
+
+  if (!task) {
+    throw new AppError(
+      "Task not found",
+      404
+    );
+  }
+
+  if (task.userId !== userId) {
+    throw new AppError(
+      "You do not have permission to modify this task",
+      403
+    );
+  }
+
+  await task.update(updates);
+
+  return createSafeTaskResponse(task);
+}
+
+export async function deleteTask({
+  taskId,
+  userId
+}) {
+  const task = await Task.findByPk(taskId);
+
+  if (!task) {
+    throw new AppError(
+      "Task not found",
+      404
+    );
+  }
+
+  if (task.userId !== userId) {
+    throw new AppError(
+      "You do not have permission to delete this task",
+      403
+    );
+  }
+
+  await task.destroy();
+
+  return;
 }
