@@ -13,6 +13,20 @@ export function sendSuccess(
   });
 }
 
+export function sendCreated(
+  res,
+  {
+    message = "Resource created successfully",
+    data = null,
+  } = {}
+) {
+  return res.status(201).json({
+    success: true,
+    message,
+    data,
+  });
+}
+
 export function sendError(
   res,
   {

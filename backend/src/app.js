@@ -4,6 +4,7 @@ import cors from "cors";
 import env from "./config/env.js";
 
 import testRoutes from "./routes/test.routes.js";
+import authRoutes from "./routes/auth.routes.js";
 
 import { notFoundMiddleware } from "./middlewares/not-found.middleware.js";
 import { errorMiddleware } from "./middlewares/error.middleware.js";
@@ -20,6 +21,8 @@ app.use(
 app.use(express.json());
 
 app.use("/api/test", testRoutes);
+
+app.use("/api/auth", authRoutes);
 
 app.get("/api/health", (req, res) => {
   res.status(200).json({
