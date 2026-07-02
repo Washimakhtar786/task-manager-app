@@ -5,18 +5,7 @@ import {
   comparePassword
 } from "../utils/password.js";
 import { generateToken } from "../utils/jwt.js";
-
-function createSafeUserResponse(user) {
-  return {
-    id: user.id,
-    name: user.name,
-    email: user.email,
-    role: user.role,
-    isActive: user.isActive,
-    createdAt: user.createdAt,
-    updatedAt: user.updatedAt
-  };
-}
+import { createSafeUserResponse } from "../utils/user-response.js";
 
 export async function registerUser({
   name,
