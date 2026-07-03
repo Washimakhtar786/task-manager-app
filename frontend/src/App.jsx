@@ -1,24 +1,54 @@
-function App() {
+import { Routes, Route } from "react-router-dom";
+
+import AppLayout from "./layouts/AppLayout.jsx";
+
+import HomePage from "./pages/HomePage.jsx";
+import LoginPage from "./pages/auth/LoginPage.jsx";
+import RegisterPage from "./pages/auth/RegisterPage.jsx";
+import TasksPage from "./pages/tasks/TasksPage.jsx";
+import ProfilePage from "./pages/ProfilePage.jsx";
+import AdminDashboardPage from "./pages/admin/AdminDashboardPage.jsx";
+import NotFoundPage from "./pages/NotFoundPage.jsx";
+
+export default function App() {
   return (
-    <main className="flex min-h-screen items-center justify-center bg-slate-100 p-6">
-      <section className="w-full max-w-xl rounded-xl bg-white p-8 text-center shadow-md">
-        <h1 className="text-3xl font-bold text-slate-900">
-          Task Manager
-        </h1>
+    <Routes>
+      <Route element={<AppLayout />}>
+        <Route
+          path="/"
+          element={<HomePage />}
+        />
 
-        <p className="mt-3 text-slate-600">
-          Frontend setup completed successfully.
-        </p>
+        <Route
+          path="/login"
+          element={<LoginPage />}
+        />
 
-        <button
-          type="button"
-          className="mt-6 rounded-lg bg-blue-600 px-5 py-3 font-medium text-white hover:bg-blue-700"
-        >
-          Get Started
-        </button>
-      </section>
-    </main>
+        <Route
+          path="/register"
+          element={<RegisterPage />}
+        />
+
+        <Route
+          path="/tasks"
+          element={<TasksPage />}
+        />
+
+        <Route
+          path="/profile"
+          element={<ProfilePage />}
+        />
+
+        <Route
+          path="/admin"
+          element={<AdminDashboardPage />}
+        />
+      </Route>
+
+      <Route
+        path="*"
+        element={<NotFoundPage />}
+      />
+    </Routes>
   );
 }
-
-export default App;
