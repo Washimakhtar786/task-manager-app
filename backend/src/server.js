@@ -6,17 +6,22 @@ import {
 } from "./config/database.js";
 
 import "./domain/index.js";
+import { seedAdminUser } from "./seeds/admin.seed.js";
 
 async function startServer() {
   try {
     await connectDatabase();
+
     await synchronizeDatabase();
+
+    await seedAdminUser();
 
     app.listen(env.port, () => {
       console.log(`🚀 Server is running on http://localhost:${env.port}`);
     });
   } catch (error) {
     console.error("Application startup failed.");
+    console.error(error);
     process.exit(1);
   }
 }

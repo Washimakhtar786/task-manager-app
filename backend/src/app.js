@@ -4,6 +4,7 @@ import env from "./config/env.js";
 
 import authRoutes from "./routes/auth.routes.js";
 import taskRoutes from "./routes/task.routes.js";
+import adminRoutes from "./routes/admin.routes.js";
 
 import { errorMiddleware } from "./middlewares/error.middleware.js";
 
@@ -27,6 +28,7 @@ app.get("/api/health", (req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/tasks", taskRoutes);
+app.use("/api/admin", adminRoutes);
 
 // ⭐ Always keep this LAST
 app.use(errorMiddleware);
