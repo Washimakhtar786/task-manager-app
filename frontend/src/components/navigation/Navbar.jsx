@@ -1,31 +1,6 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
-const publicLinks = [
-  {
-    to: "/",
-    label: "Home",
-  },
-  {
-    to: "/login",
-    label: "Login",
-  },
-  {
-    to: "/register",
-    label: "Register",
-  },
-  {
-    to: "/tasks",
-    label: "Tasks",
-  },
-  {
-    to: "/profile",
-    label: "Profile",
-  },
-  {
-    to: "/admin",
-    label: "Admin",
-  },
-];
+import { useAuth } from "../../context/AuthContext.jsx";
 
 function getLinkClasses({ isActive }) {
   return [
@@ -37,6 +12,22 @@ function getLinkClasses({ isActive }) {
 }
 
 export default function Navbar() {
+  const {
+    isAuthenticated,
+    isAdmin,
+    logout,
+  } = useAuth();
+
+  const navigate = useNavigate();
+
+  function handleLogout() {
+    logout();
+
+    navigate("/login", {
+      replace: true,
+    });
+  }
+
   return (
     <header className="border-b border-slate-200 bg-white">
       <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-4 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
@@ -64,16 +55,65 @@ export default function Navbar() {
           className="flex flex-wrap items-center gap-1"
           aria-label="Main navigation"
         >
-          {publicLinks.map((link) => (
-            <NavLink
-              key={link.to}
-              to={link.to}
-              end={link.to === "/"}
-              className={getLinkClasses}
-            >
-              {link.label}
-            </NavLink>
-          ))}
+          {/* Home */}
+          <NavLink
+            to="/"
+            end
+            className={getLinkClasses}
+          >
+            Home
+          </NavLink>
+
+          {!isAuthenticated ? (
+            <>
+              <NavLink
+                to="/login"
+                className={getLinkClasses}
+              >
+                Login
+              </NavLink>
+
+              <NavLink
+                to="/register"
+                className={getLinkClasses}
+              >
+                Register
+              </NavLink>
+            </>
+          ) : (
+            <>
+              <NavLink
+                to="/tasks"
+                className={getLinkClasses}
+              >
+                Tasks
+              </NavLink>
+
+              <NavLink
+                to="/profile"
+                className={getLinkClasses}
+              >
+                Profile
+              </NavLink>
+
+              {isAdmin && (
+                <NavLink
+                  to="/admin"
+                  className={getLinkClasses}
+                >
+                  Admin
+                </NavLink>
+              )}
+
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="rounded-md px-3 py-2 text-sm font-medium text-red-600 transition-colors hover:bg-red-50"
+              >
+                Logout
+              </button>
+            </>
+          )}
         </nav>
 
       </div>

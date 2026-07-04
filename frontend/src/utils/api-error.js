@@ -1,0 +1,14 @@
+export function getApiErrorMessage(
+  error,
+  fallbackMessage = "Something went wrong"
+) {
+  return (
+    error?.response?.data?.message ||
+    error?.message ||
+    fallbackMessage
+  );
+}
+
+export function getApiFieldErrors(error) {
+  return error?.response?.data?.errors || {};
+}
