@@ -1,18 +1,216 @@
+import { useEffect, useState } from "react";
+
+import {
+  fetchTasks,
+  createTask,
+  updateTask,
+  deleteTask,
+} from "../../api/taskApi.js";
+
 import PageHeader from "../../components/common/PageHeader.jsx";
+import Message from "../../components/common/Message.jsx";
+import TaskSummary from "../../components/tasks/TaskSummary.jsx";
+import TaskFilter from "../../components/tasks/TaskFilter.jsx";
+import TaskCard from "../../components/tasks/TaskCard.jsx";
+import EmptyTasks from "../../components/tasks/EmptyTasks.jsx";
+import CreateTaskForm from "../../components/tasks/CreateTaskForm.jsx";
 
 export default function TasksPage() {
+  const [tasks, setTasks] = useState([]);
+
+  const [selectedStatus, setSelectedStatus] =
+    useState("");
+
+  const [loading, setLoading] =
+    useState(true);
+
+  const [error, setError] =
+    useState("");
+
+  const [showCreateForm, setShowCreateForm] =
+    useState(false);
+
+  const [creating, setCreating] =
+    useState(false);
+
+  const [editingTask, setEditingTask] =
+    useState(null);
+
+  const [deleting, setDeleting] =
+    useState(false);
+
+  async function loadTasks(status = "") {
+    try {
+      setLoading(true);
+
+      setError("");
+
+      const data = await fetchTasks(status);
+
+      setTasks(data.tasks);
+    } catch (error) {
+      setError("Failed to load tasks.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    loadTasks(selectedStatus);
+  }, [selectedStatus]);
+
+  async function handleCreateTask(taskData) {
+    console.log("SENDING =", taskData);
+
+    try {
+      setCreating(true);
+
+      if (editingTask) {
+        await updateTask(
+          editingTask.id,
+          taskData
+        );
+      } else {
+        await createTask(taskData);
+      }
+
+      await loadTasks(selectedStatus);
+
+      setEditingTask(null);
+
+      setShowCreateForm(false);
+    } catch (error) {
+      console.log(
+        "CREATE TASK ERROR =",
+        error.response?.data
+      );
+
+      setError(
+        editingTask
+          ? "Failed to update task."
+          : "Failed to create task."
+      );
+    } finally {
+      setCreating(false);
+    }
+  }
+
+  async function handleDeleteTask(taskId) {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this task?"
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      setDeleting(true);
+
+      await deleteTask(taskId);
+
+      await loadTasks(selectedStatus);
+
+      if (
+        editingTask &&
+        editingTask.id === taskId
+      ) {
+        setEditingTask(null);
+        setShowCreateForm(false);
+      }
+    } catch (error) {
+      console.log(
+        "DELETE ERROR =",
+        error.response?.data
+      );
+
+      setError("Failed to delete task.");
+    } finally {
+      setDeleting(false);
+    }
+  }
+
   return (
     <>
       <PageHeader
         title="My Tasks"
-        description="Manage all your tasks."
+        description="Manage and organize your daily work."
       />
 
-      <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-        <p className="text-slate-600">
-          Tasks Page (Coming in Part 12)
-        </p>
+      <div className="mb-6 flex justify-end">
+        <button
+          type="button"
+          onClick={() =>
+            setShowCreateForm(true)
+          }
+          className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-700"
+        >
+          + New Task
+        </button>
       </div>
+
+      {(showCreateForm || editingTask) && (
+        <CreateTaskForm
+          initialValues={editingTask}
+          onSubmit={handleCreateTask}
+          onCancel={() => {
+            setShowCreateForm(false);
+            setEditingTask(null);
+          }}
+          loading={creating}
+        />
+      )}
+
+      {loading && (
+        <Message>
+          Loading tasks...
+        </Message>
+      )}
+
+      {!loading && error && (
+        <Message variant="error">
+          {error}
+        </Message>
+      )}
+
+      {!loading &&
+        !error &&
+        tasks.length === 0 && (
+          <EmptyTasks />
+        )}
+
+      {!loading &&
+        !error &&
+        tasks.length > 0 && (
+          <>
+            <TaskSummary
+              tasks={tasks}
+            />
+
+            <div className="mt-6">
+              <TaskFilter
+                selectedStatus={selectedStatus}
+                onChange={setSelectedStatus}
+              />
+            </div>
+
+            <div className="mt-6 grid gap-4">
+              {tasks.map((task) => (
+                <TaskCard
+                  key={task.id}
+                  task={task}
+                  onEdit={() => {
+                    setEditingTask(task);
+                    setShowCreateForm(true);
+                  }}
+                  onDelete={() =>
+                    handleDeleteTask(task.id)
+                  }
+                />
+              ))}
+            </div>
+          </>
+        )}
     </>
   );
 }
