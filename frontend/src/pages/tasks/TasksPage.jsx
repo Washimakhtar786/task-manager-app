@@ -1,4 +1,11 @@
-import { useEffect, useState } from "react";
+import {
+  useEffect,
+  useState,
+} from "react";
+
+import {
+  useSearchParams,
+} from "react-router-dom";
 
 import {
   fetchTasks,
@@ -9,6 +16,8 @@ import {
 
 import PageHeader from "../../components/common/PageHeader.jsx";
 import Message from "../../components/common/Message.jsx";
+import ConfirmationModal from "../../components/common/ConfirmationModal.jsx";
+
 import TaskSummary from "../../components/tasks/TaskSummary.jsx";
 import TaskFilter from "../../components/tasks/TaskFilter.jsx";
 import TaskCard from "../../components/tasks/TaskCard.jsx";
@@ -39,6 +48,18 @@ export default function TasksPage() {
   const [deleting, setDeleting] =
     useState(false);
 
+  const [showDeleteModal, setShowDeleteModal] =
+    useState(false);
+
+  const [taskToDelete, setTaskToDelete] =
+    useState(null);
+
+  const [searchParams] =
+  useSearchParams();
+  
+  const [successMessage, setSuccessMessage] =
+  useState("");
+
   async function loadTasks(status = "") {
     try {
       setLoading(true);
@@ -59,9 +80,18 @@ export default function TasksPage() {
     loadTasks(selectedStatus);
   }, [selectedStatus]);
 
-  async function handleCreateTask(taskData) {
-    console.log("SENDING =", taskData);
+  useEffect(() => {
+  if (
+    searchParams.get("updated") ===
+    "true"
+  ) {
+    setSuccessMessage(
+      "Task updated successfully."
+    );
+  }
+}, [searchParams]);
 
+  async function handleCreateTask(taskData) {
     try {
       setCreating(true);
 
@@ -95,37 +125,47 @@ export default function TasksPage() {
     }
   }
 
-  async function handleDeleteTask(taskId) {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this task?"
-    );
-
-    if (!confirmed) {
+  async function handleDeleteTask() {
+    if (!taskToDelete) {
       return;
     }
 
     try {
       setDeleting(true);
 
-      await deleteTask(taskId);
+      setError("");
+
+      await deleteTask(taskToDelete.id);
 
       await loadTasks(selectedStatus);
 
       if (
         editingTask &&
-        editingTask.id === taskId
+        editingTask.id === taskToDelete.id
       ) {
         setEditingTask(null);
         setShowCreateForm(false);
       }
-    } catch (error) {
-      console.log(
-        "DELETE ERROR =",
-        error.response?.data
-      );
 
-      setError("Failed to delete task.");
-    } finally {
+      setTaskToDelete(null);
+      setShowDeleteModal(false);
+    }  
+    catch (error) {
+  console.log(
+    "DELETE ERROR =",
+    error.response?.data
+  );
+
+  
+
+
+
+  setError(
+    error.response?.data?.message ||
+    "Failed to delete task."
+  );
+}
+    finally {
       setDeleting(false);
     }
   }
@@ -167,6 +207,13 @@ export default function TasksPage() {
         </Message>
       )}
 
+
+      {successMessage && (
+  <Message type="success">
+    {successMessage}
+  </Message>
+)}
+
       {!loading && error && (
         <Message variant="error">
           {error}
@@ -203,14 +250,29 @@ export default function TasksPage() {
                     setEditingTask(task);
                     setShowCreateForm(true);
                   }}
-                  onDelete={() =>
-                    handleDeleteTask(task.id)
-                  }
+                  onDelete={() => {
+                    setTaskToDelete(task);
+                    setShowDeleteModal(true);
+                  }}
                 />
               ))}
             </div>
           </>
         )}
+
+      <ConfirmationModal
+        open={showDeleteModal}
+        title="Delete Task"
+        message="Are you sure you want to permanently delete this task?"
+        confirmText="Delete"
+        cancelText="Cancel"
+        loading={deleting}
+        onConfirm={handleDeleteTask}
+        onCancel={() => {
+          setShowDeleteModal(false);
+          setTaskToDelete(null);
+        }}
+      />
     </>
   );
 }

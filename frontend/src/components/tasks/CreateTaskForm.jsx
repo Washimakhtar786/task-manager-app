@@ -29,7 +29,11 @@ export default function CreateTaskForm({
 
     console.log("FORM DATA =", formData);
 
+    console.log("BEFORE onSubmit");
+
     await onSubmit(formData);
+
+    console.log("AFTER onSubmit");
 
     setFormData({
       title: "",

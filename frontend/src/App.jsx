@@ -14,6 +14,7 @@ import NotFoundPage from "./pages/NotFoundPage.jsx";
 import ProtectedRoute from "./components/auth/ProtectedRoute.jsx";
 import PublicOnlyRoute from "./components/auth/PublicOnlyRoute.jsx";
 import AdminRoute from "./components/auth/AdminRoute.jsx";
+import EditTaskPage from "./pages/tasks/EditTaskPage.jsx";
 
 export default function App() {
   return (
@@ -44,6 +45,11 @@ export default function App() {
             path="/tasks"
             element={<TasksPage />}
           />
+
+           <Route
+    path="/tasks/:taskId/edit"
+    element={<EditTaskPage />}
+  />
 
           <Route
             path="/profile"
