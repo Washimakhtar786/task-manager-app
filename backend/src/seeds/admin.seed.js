@@ -3,17 +3,24 @@ import env from "../config/env.js";
 import { hashPassword } from "../utils/password.js";
 
 export async function seedAdminUser() {
+  if (!env.admin.email || !env.admin.password) {
+    console.log(
+      "Admin seed skipped because ADMIN_EMAIL or ADMIN_PASSWORD is not configured."
+    );
+    return;
+  }
+
   const existingAdmin = await User.findOne({
     where: {
-      email: env.admin.email
-    }
+      email: env.admin.email,
+    },
   });
 
   if (existingAdmin) {
     if (existingAdmin.role !== "ADMIN") {
       await existingAdmin.update({
         role: "ADMIN",
-        isActive: true
+        isActive: true,
       });
 
       console.log(
@@ -37,7 +44,7 @@ export async function seedAdminUser() {
     email: env.admin.email,
     password: hashedPassword,
     role: "ADMIN",
-    isActive: true
+    isActive: true,
   });
 
   console.log(
