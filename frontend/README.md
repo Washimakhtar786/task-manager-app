@@ -1,16 +1,210 @@
-# React + Vite
+# 📝 Task Manager Application
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A full-stack Task Manager application built using **React, Node.js, Express.js, PostgreSQL, and Sequelize**.
 
-Currently, two official plugins are available:
+The application allows users to register, log in, manage their personal tasks, and provides an Admin Dashboard for managing users and monitoring the system.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+# 🚀 Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Authentication
 
-## Expanding the ESLint configuration
+- User Registration
+- User Login
+- JWT Authentication
+- Logout
+- Protected Routes
+- Role-Based Access Control
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Task Management
+
+- Create Task
+- View Tasks
+- Update Task
+- Delete Task
+- Task Status Filter
+- Task Summary
+- Success & Error Messages
+- Confirmation Modal
+
+## Admin Dashboard
+
+- Dashboard Statistics
+- View All Users
+- Activate / Deactivate Users
+- View All Tasks
+- Role-Based Authorization
+
+---
+
+# 🛠 Tech Stack
+
+## Frontend
+
+- React
+- React Router DOM
+- Axios
+- Tailwind CSS
+- Vite
+
+## Backend
+
+- Node.js
+- Express.js
+- Sequelize ORM
+- PostgreSQL
+
+## Authentication
+
+- JWT (JSON Web Token)
+
+---
+
+# 📂 Project Structure
+
+```
+task-manager-app/
+
+├── frontend/
+│   ├── src/
+│   ├── public/
+│   ├── package.json
+│   └── .env
+
+├── server/
+│   ├── src/
+│   ├── package.json
+│   └── .env
+
+└── README.md
+```
+
+---
+
+# ⚙️ Environment Variables
+
+## Frontend (.env)
+
+```env
+VITE_API_BASE_URL=http://localhost:5000/api
+```
+
+---
+
+## Backend (.env)
+
+```env
+PORT=5000
+
+DATABASE_URL=your_database_url
+
+JWT_SECRET=your_secret_key
+
+FRONTEND_URL=http://localhost:5173
+```
+
+---
+
+# 📦 Installation
+
+Clone the repository
+
+```bash
+git clone <your-repository-url>
+```
+
+Move into project
+
+```bash
+cd task-manager-app
+```
+
+---
+
+## Backend Setup
+
+```bash
+cd server
+
+npm install
+```
+
+Run backend
+
+```bash
+npm run dev
+```
+
+---
+
+## Frontend Setup
+
+```bash
+cd frontend
+
+npm install
+```
+
+Run frontend
+
+```bash
+npm run dev
+```
+
+---
+
+# 🌐 API Base URL
+
+```
+http://localhost:5000/api
+```
+
+---
+
+# 👨‍💻 User Features
+
+- Register Account
+- Login
+- Manage Personal Tasks
+- Edit Tasks
+- Delete Tasks
+- Filter Tasks
+- View Task Summary
+
+---
+
+# 👨‍💼 Admin Features
+
+- Dashboard Statistics
+- View All Users
+- Activate Users
+- Deactivate Users
+- View All Tasks
+
+---
+
+# 📸 Screenshots
+
+You can add screenshots here:
+
+- Login Page
+- Register Page
+- Tasks Dashboard
+- Admin Dashboard
+- Users Management
+- Tasks Management
+
+---
+
+# 📄 License
+
+This project is created for learning purposes.
+
+---
+
+# 👤 Author
+
+**Washim Akhtar**
+
+B.Tech Computer Science Engineering

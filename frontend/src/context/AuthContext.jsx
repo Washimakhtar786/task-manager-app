@@ -15,10 +15,13 @@ import {
 import {
   clearAuthStorage,
   getStoredToken,
-  removeStoredToken,
   storeToken,
   storeUser,
 } from "../utils/storage.js";
+
+import {
+  AUTH_LOGOUT_EVENT,
+} from "../api/apiClient.js";
 
 const AuthContext = createContext(null);
 
@@ -42,67 +45,78 @@ export function AuthProvider({
   const [loading, setLoading] =
     useState(true);
 
+  useEffect(() => {
+    async function restoreSession() {
+      const token = getStoredToken();
 
-    useEffect(() => {
-  async function restoreSession() {
-    const token = getStoredToken();
+      if (!token) {
+        setLoading(false);
+        return;
+      }
 
-    if (!token) {
-      setLoading(false);
-      return;
+      try {
+        const profile =
+          await getCurrentProfile();
+
+        storeUser(profile);
+
+        setUser(profile);
+      } catch (error) {
+        clearAuthStorage();
+
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
     }
 
-    try {
-      const profile =
-        await getCurrentProfile();
+    restoreSession();
+  }, []);
 
-      storeUser(profile);
-
-      setUser(profile);
-    } catch (error) {
-      clearAuthStorage();
-
+  // Listen for forced logout from Axios
+  useEffect(() => {
+    function handleLogoutEvent() {
       setUser(null);
-    } finally {
       setLoading(false);
     }
+
+    window.addEventListener(
+      AUTH_LOGOUT_EVENT,
+      handleLogoutEvent
+    );
+
+    return () => {
+      window.removeEventListener(
+        AUTH_LOGOUT_EVENT,
+        handleLogoutEvent
+      );
+    };
+  }, []);
+
+  async function login(formData) {
+    const data = await loginAccount(formData);
+
+    storeToken(data.token);
+
+    storeUser(data.user);
+
+    setUser(data.user);
+
+    return data.user;
   }
 
-  restoreSession();
-}, []);
+  async function register(formData) {
+    const user =
+      await registerAccount(formData);
 
+    return user;
+  }
 
+  function logout() {
+    clearAuthStorage();
 
-async function login(formData) {
-  const data = await loginAccount(formData);
-
-  storeToken(data.token);
-
-  storeUser(data.user);
-
-  setUser(data.user);
-
-  return data.user;
-}
-
-async function register(formData) {
-  const user = await registerAccount(formData);
-
-  return user;
-}
-
-function logout() {
-  clearAuthStorage();
-  setUser(null);
-}
-
-console.log("AuthContext", {
-  user,
-  loading,
-  isAuthenticated: Boolean(user),
-  role: user?.role,
-  isAdmin: user?.role === "ADMIN",
-});
+    setUser(null);
+  }
 
   const value = useMemo(
     () => ({
@@ -119,10 +133,12 @@ console.log("AuthContext", {
       setUser,
 
       setLoading,
-      login,
-      register,
-      logout,
 
+      login,
+
+      register,
+
+      logout,
     }),
     [user, loading]
   );
@@ -135,7 +151,5 @@ console.log("AuthContext", {
     </AuthContext.Provider>
   );
 }
-
-
 
 export default AuthContext;
