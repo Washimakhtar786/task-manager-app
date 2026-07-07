@@ -2,15 +2,23 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const requiredEnvironmentVariables = [
-  "DB_HOST",
-  "DB_PORT",
-  "DB_NAME",
-  "DB_USER",
-  "DB_PASSWORD",
-  "JWT_SECRET",
-  "FRONTEND_URL",
-];
+const hasDatabaseUrl = Boolean(process.env.DATABASE_URL);
+
+const requiredEnvironmentVariables = hasDatabaseUrl
+  ? [
+      "DATABASE_URL",
+      "JWT_SECRET",
+      "FRONTEND_URL",
+    ]
+  : [
+      "DB_HOST",
+      "DB_PORT",
+      "DB_NAME",
+      "DB_USER",
+      "DB_PASSWORD",
+      "JWT_SECRET",
+      "FRONTEND_URL",
+    ];
 
 for (const variableName of requiredEnvironmentVariables) {
   if (!process.env[variableName]) {
@@ -23,6 +31,8 @@ for (const variableName of requiredEnvironmentVariables) {
 const env = {
   port: Number(process.env.PORT) || 5000,
   nodeEnv: process.env.NODE_ENV || "development",
+
+  databaseUrl: process.env.DATABASE_URL,
 
   database: {
     host: process.env.DB_HOST,
