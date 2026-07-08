@@ -1,5 +1,8 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import {
+  Link,
+  useNavigate,
+} from "react-router-dom";
 
 import { useAuth } from "../../context/AuthContext.jsx";
 import { getApiErrorMessage } from "../../utils/api-error.js";
@@ -10,22 +13,26 @@ import FormInput from "../../components/common/FormInput.jsx";
 import SubmitButton from "../../components/common/SubmitButton.jsx";
 
 export default function RegisterPage() {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
+  const [formData, setFormData] =
+    useState({
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    });
 
   const { register } = useAuth();
 
   const navigate = useNavigate();
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] =
+    useState(false);
 
-  const [error, setError] = useState("");
+  const [error, setError] =
+    useState("");
 
-  const [success, setSuccess] = useState("");
+  const [success, setSuccess] =
+    useState("");
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -42,8 +49,13 @@ export default function RegisterPage() {
     setError("");
     setSuccess("");
 
-    if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match.");
+    if (
+      formData.password !==
+      formData.confirmPassword
+    ) {
+      setError(
+        "Passwords do not match."
+      );
       return;
     }
 
@@ -64,7 +76,9 @@ export default function RegisterPage() {
         navigate("/login");
       }, 1500);
     } catch (error) {
-      setError(getApiErrorMessage(error));
+      setError(
+        getApiErrorMessage(error)
+      );
     } finally {
       setLoading(false);
     }
@@ -82,17 +96,17 @@ export default function RegisterPage() {
           onSubmit={handleSubmit}
           className="space-y-5"
         >
-          {error ? (
+          {error && (
             <Message type="error">
               {error}
             </Message>
-          ) : null}
+          )}
 
-          {success ? (
+          {success && (
             <Message type="success">
               {success}
             </Message>
-          ) : null}
+          )}
 
           <FormInput
             label="Full Name"
@@ -140,6 +154,16 @@ export default function RegisterPage() {
             Create Account
           </SubmitButton>
         </form>
+
+        <div className="mt-6 text-center text-sm text-slate-600">
+          Already have an account?{" "}
+          <Link
+            to="/login"
+            className="font-semibold text-indigo-600 transition hover:text-indigo-700 hover:underline"
+          >
+            Login
+          </Link>
+        </div>
       </div>
     </>
   );

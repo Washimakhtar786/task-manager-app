@@ -2,6 +2,13 @@ import { NavLink, useNavigate } from "react-router-dom";
 
 import { useAuth } from "../../context/AuthContext.jsx";
 
+import { useState } from "react";
+import { MdMenu } from "react-icons/md";
+
+import MobileMenu from "./MobileMenu.jsx";
+import { useLocation } from "react-router-dom";
+
+
 function getLinkClasses({ isActive }) {
   return [
     "rounded-md px-3 py-2 text-sm font-medium transition-colors",
@@ -20,6 +27,19 @@ export default function Navbar() {
 
   const navigate = useNavigate();
 
+  const [mobileMenuOpen, setMobileMenuOpen] =
+  useState(false);
+
+  const location = useLocation();
+
+const isDashboardPage = [
+  "/tasks",
+  "/profile",
+  "/admin",
+].some((path) =>
+  location.pathname.startsWith(path)
+);
+
   function handleLogout() {
     logout();
 
@@ -30,7 +50,7 @@ export default function Navbar() {
 
   return (
     <header className="border-b border-slate-200 bg-white">
-      <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-4 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
 
         <NavLink
           to="/"
@@ -51,10 +71,20 @@ export default function Navbar() {
           </div>
         </NavLink>
 
+        <button
+  type="button"
+  onClick={() =>
+    setMobileMenuOpen(true)
+  }
+  className="rounded-lg p-2 transition hover:bg-slate-100 md:hidden"
+>
+  <MdMenu size={28} />
+</button>
+
         <nav
-          className="flex flex-wrap items-center gap-1"
-          aria-label="Main navigation"
-        >
+  className="hidden md:flex flex-wrap items-center gap-1"
+  aria-label="Main navigation"
+>
           {/* Home */}
           <NavLink
             to="/"
@@ -117,6 +147,13 @@ export default function Navbar() {
         </nav>
 
       </div>
+
+      <MobileMenu
+  open={mobileMenuOpen}
+  onClose={() =>
+    setMobileMenuOpen(false)
+  }
+/>
     </header>
   );
 }

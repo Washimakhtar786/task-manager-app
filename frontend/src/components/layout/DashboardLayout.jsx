@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { MdMenu } from "react-icons/md";
+
 
 import Sidebar from "./Sidebar.jsx";
 import TopHeader from "./TopHeader.jsx";
@@ -43,18 +43,7 @@ export default function DashboardLayout({
       {/* Main */}
 
       <div className="flex flex-1 flex-col">
-        {/* Mobile Menu */}
-
-        <div className="border-b bg-white p-4 lg:hidden">
-          <button
-            onClick={() =>
-              setSidebarOpen(true)
-            }
-            className="rounded-lg border p-2"
-          >
-            <MdMenu size={24} />
-          </button>
-        </div>
+        
 
         <TopHeader />
 

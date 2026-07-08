@@ -1,5 +1,8 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import {
+  Link,
+  useNavigate,
+} from "react-router-dom";
 
 import { useAuth } from "../../context/AuthContext.jsx";
 import { getApiErrorMessage } from "../../utils/api-error.js";
@@ -19,9 +22,11 @@ export default function LoginPage() {
 
   const navigate = useNavigate();
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] =
+    useState(false);
 
-  const [error, setError] = useState("");
+  const [error, setError] =
+    useState("");
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -44,7 +49,9 @@ export default function LoginPage() {
 
       navigate("/tasks");
     } catch (error) {
-      setError(getApiErrorMessage(error));
+      setError(
+        getApiErrorMessage(error)
+      );
     } finally {
       setLoading(false);
     }
@@ -62,11 +69,11 @@ export default function LoginPage() {
           onSubmit={handleSubmit}
           className="space-y-5"
         >
-          {error ? (
+          {error && (
             <Message type="error">
               {error}
             </Message>
-          ) : null}
+          )}
 
           <FormInput
             label="Email Address"
@@ -95,6 +102,16 @@ export default function LoginPage() {
             Sign In
           </SubmitButton>
         </form>
+
+        <div className="mt-6 text-center text-sm text-slate-600">
+          Don't have an account?{" "}
+          <Link
+            to="/register"
+            className="font-semibold text-indigo-600 transition hover:text-indigo-700 hover:underline"
+          >
+            Register
+          </Link>
+        </div>
       </div>
     </>
   );
