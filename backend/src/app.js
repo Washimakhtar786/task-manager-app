@@ -10,10 +10,31 @@ import { errorMiddleware } from "./middlewares/error.middleware.js";
 
 const app = express();
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  env.frontendUrl,
+].filter(Boolean);
+
 app.use(
   cors({
-    origin: env.frontendUrl,
-    credentials: true
+    origin(origin, callback) {
+      // Allow Postman, health checks, server-to-server requests
+      if (!origin) {
+        return callback(null, true);
+      }
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      console.warn(
+        `Blocked CORS request from: ${origin}`
+      );
+
+      return callback(null, false);
+    },
+
+    credentials: true,
   })
 );
 
@@ -22,7 +43,7 @@ app.use(express.json());
 app.get("/api/health", (req, res) => {
   res.status(200).json({
     success: true,
-    message: "Task Manager API is running"
+    message: "Task Manager API is running",
   });
 });
 
@@ -30,7 +51,6 @@ app.use("/api/auth", authRoutes);
 app.use("/api/tasks", taskRoutes);
 app.use("/api/admin", adminRoutes);
 
-// ⭐ Always keep this LAST
 app.use(errorMiddleware);
 
 export default app;

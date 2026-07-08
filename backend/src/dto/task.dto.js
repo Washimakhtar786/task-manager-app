@@ -27,7 +27,9 @@ function isValidDateOnly(value) {
 export function validateCreateTaskData(data = {}) {
   const errors = {};
 
-  const title = isString(data.title) ? data.title.trim() : "";
+  const title = isString(data.title)
+    ? data.title.trim()
+    : "";
 
   const description =
     data.description === undefined ||
@@ -35,8 +37,8 @@ export function validateCreateTaskData(data = {}) {
     data.description === ""
       ? null
       : isString(data.description)
-        ? data.description.trim()
-        : "";
+      ? data.description.trim()
+      : "";
 
   const dueDate =
     data.dueDate === undefined ||
@@ -45,10 +47,20 @@ export function validateCreateTaskData(data = {}) {
       ? null
       : data.dueDate;
 
+  const status =
+    data.status === undefined ||
+    data.status === null ||
+    data.status === ""
+      ? "PENDING"
+      : isString(data.status)
+      ? data.status.trim().toUpperCase()
+      : "";
+
   if (!title) {
     errors.title = "Task title is required";
   } else if (title.length < 2) {
-    errors.title = "Task title must contain at least 2 characters";
+    errors.title =
+      "Task title must contain at least 2 characters";
   } else if (title.length > 200) {
     errors.title =
       "Task title must not contain more than 200 characters";
@@ -60,7 +72,8 @@ export function validateCreateTaskData(data = {}) {
     data.description !== "" &&
     !isString(data.description)
   ) {
-    errors.description = "Task description must be text";
+    errors.description =
+      "Task description must be text";
   } else if (
     isString(description) &&
     description.length > 2000
@@ -69,32 +82,47 @@ export function validateCreateTaskData(data = {}) {
       "Task description must not contain more than 2000 characters";
   }
 
-  if (dueDate !== null && !isValidDateOnly(dueDate)) {
+  if (
+    dueDate !== null &&
+    !isValidDateOnly(dueDate)
+  ) {
     errors.dueDate =
       "Due date must be a valid date in YYYY-MM-DD format";
   }
 
-  if (Object.prototype.hasOwnProperty.call(data, "userId")) {
-    errors.userId = "Task owner cannot be provided in the request";
+  if (
+    !ALLOWED_TASK_STATUSES.includes(status)
+  ) {
+    errors.status =
+      "Status must be either PENDING or COMPLETED";
   }
 
-  if (Object.prototype.hasOwnProperty.call(data, "status")) {
-    errors.status =
-      "Task status cannot be provided while creating a task";
+  if (
+    Object.prototype.hasOwnProperty.call(
+      data,
+      "userId"
+    )
+  ) {
+    errors.userId =
+      "Task owner cannot be provided in the request";
   }
 
   return {
-    isValid: Object.keys(errors).length === 0,
+    isValid:
+      Object.keys(errors).length === 0,
     errors,
     data: {
       title,
       description,
-      dueDate
-    }
+      dueDate,
+      status,
+    },
   };
 }
 
-export function validateUpdateTaskData(data = {}) {
+export function validateUpdateTaskData(
+  data = {}
+) {
   const errors = {};
   const cleanedData = {};
 
@@ -102,26 +130,37 @@ export function validateUpdateTaskData(data = {}) {
     "title",
     "description",
     "status",
-    "dueDate"
+    "dueDate",
   ];
 
-  const receivedFields = Object.keys(data);
+  const receivedFields =
+    Object.keys(data);
 
   if (receivedFields.length === 0) {
-    errors.request = "Provide at least one field to update";
+    errors.request =
+      "Provide at least one field to update";
   }
 
   for (const field of receivedFields) {
     if (!allowedFields.includes(field)) {
-      errors[field] = `${field} cannot be updated`;
+      errors[field] =
+        `${field} cannot be updated`;
     }
   }
 
-  if (Object.prototype.hasOwnProperty.call(data, "title")) {
-    const title = isString(data.title) ? data.title.trim() : "";
+  if (
+    Object.prototype.hasOwnProperty.call(
+      data,
+      "title"
+    )
+  ) {
+    const title = isString(data.title)
+      ? data.title.trim()
+      : "";
 
     if (!title) {
-      errors.title = "Task title is required";
+      errors.title =
+        "Task title is required";
     } else if (title.length < 2) {
       errors.title =
         "Task title must contain at least 2 characters";
@@ -133,32 +172,51 @@ export function validateUpdateTaskData(data = {}) {
     }
   }
 
-  if (Object.prototype.hasOwnProperty.call(data, "description")) {
+  if (
+    Object.prototype.hasOwnProperty.call(
+      data,
+      "description"
+    )
+  ) {
     if (
       data.description === null ||
       data.description === ""
     ) {
       cleanedData.description = null;
-    } else if (!isString(data.description)) {
-      errors.description = "Task description must be text";
+    } else if (
+      !isString(data.description)
+    ) {
+      errors.description =
+        "Task description must be text";
     } else {
-      const description = data.description.trim();
+      const description =
+        data.description.trim();
 
       if (description.length > 2000) {
         errors.description =
           "Task description must not contain more than 2000 characters";
       } else {
-        cleanedData.description = description || null;
+        cleanedData.description =
+          description || null;
       }
     }
   }
 
-  if (Object.prototype.hasOwnProperty.call(data, "status")) {
+  if (
+    Object.prototype.hasOwnProperty.call(
+      data,
+      "status"
+    )
+  ) {
     const status = isString(data.status)
       ? data.status.trim().toUpperCase()
       : "";
 
-    if (!ALLOWED_TASK_STATUSES.includes(status)) {
+    if (
+      !ALLOWED_TASK_STATUSES.includes(
+        status
+      )
+    ) {
       errors.status =
         "Status must be either PENDING or COMPLETED";
     } else {
@@ -166,24 +224,33 @@ export function validateUpdateTaskData(data = {}) {
     }
   }
 
-  if (Object.prototype.hasOwnProperty.call(data, "dueDate")) {
+  if (
+    Object.prototype.hasOwnProperty.call(
+      data,
+      "dueDate"
+    )
+  ) {
     if (
       data.dueDate === null ||
       data.dueDate === ""
     ) {
       cleanedData.dueDate = null;
-    } else if (!isValidDateOnly(data.dueDate)) {
+    } else if (
+      !isValidDateOnly(data.dueDate)
+    ) {
       errors.dueDate =
         "Due date must be a valid date in YYYY-MM-DD format";
     } else {
-      cleanedData.dueDate = data.dueDate;
+      cleanedData.dueDate =
+        data.dueDate;
     }
   }
 
   return {
-    isValid: Object.keys(errors).length === 0,
+    isValid:
+      Object.keys(errors).length === 0,
     errors,
-    data: cleanedData
+    data: cleanedData,
   };
 }
 

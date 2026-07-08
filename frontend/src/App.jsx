@@ -15,6 +15,7 @@ import ProtectedRoute from "./components/auth/ProtectedRoute.jsx";
 import PublicOnlyRoute from "./components/auth/PublicOnlyRoute.jsx";
 import AdminRoute from "./components/auth/AdminRoute.jsx";
 import EditTaskPage from "./pages/tasks/EditTaskPage.jsx";
+import DashboardPage from "./pages/DashboardPage.jsx";
 
 export default function App() {
   return (
@@ -70,6 +71,11 @@ export default function App() {
         path="*"
         element={<NotFoundPage />}
       />
+
+      <Route
+  path="/dashboard"
+  element={<DashboardPage />}
+/>
     </Routes>
   );
 }

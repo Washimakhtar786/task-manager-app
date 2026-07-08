@@ -8,14 +8,15 @@ export async function createTask({
   userId,
   title,
   description,
-  dueDate
+  dueDate,
+  status = "PENDING",
 }) {
   const task = await Task.create({
     userId,
     title,
     description,
     dueDate,
-    status: "PENDING"
+    status,
   });
 
   return createSafeTaskResponse(task);

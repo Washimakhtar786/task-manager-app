@@ -10,10 +10,10 @@ export default function CreateTaskForm({
   initialValues = null,
 }) {
   const [formData, setFormData] = useState({
-  title: initialValues?.title ?? "",
-  description:
-    initialValues?.description ?? "",
-});
+    title: initialValues?.title ?? "",
+    description: initialValues?.description ?? "",
+    status: initialValues?.status ?? "PENDING",
+  });
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -27,28 +27,22 @@ export default function CreateTaskForm({
   async function handleSubmit(event) {
     event.preventDefault();
 
-    console.log("FORM DATA =", formData);
-
-    console.log("BEFORE onSubmit");
-
     await onSubmit(formData);
-
-    console.log("AFTER onSubmit");
 
     setFormData({
       title: "",
       description: "",
-      
+      status: "PENDING",
     });
   }
 
   return (
     <div className="mb-6 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
       <h2 className="mb-5 text-xl font-semibold text-slate-900">
-  {initialValues
-    ? "Update Task"
-    : "Create New Task"}
-</h2>
+        {initialValues
+          ? "Update Task"
+          : "Create New Task"}
+      </h2>
 
       <form
         onSubmit={handleSubmit}
@@ -78,17 +72,38 @@ export default function CreateTaskForm({
           />
         </div>
 
-        
+        {/* Status */}
+
+        <div>
+          <label className="mb-2 block text-sm font-medium text-slate-700">
+            Status
+          </label>
+
+          <select
+            name="status"
+            value={formData.status}
+            onChange={handleChange}
+            className="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none transition-colors focus:border-indigo-500"
+          >
+            <option value="PENDING">
+              Pending
+            </option>
+
+            <option value="COMPLETED">
+              Completed
+            </option>
+          </select>
+        </div>
 
         <div className="flex gap-3">
           <SubmitButton disabled={loading}>
             {loading
-  ? initialValues
-    ? "Updating..."
-    : "Creating..."
-  : initialValues
-    ? "Update Task"
-    : "Create Task"}
+              ? initialValues
+                ? "Updating..."
+                : "Creating..."
+              : initialValues
+              ? "Update Task"
+              : "Create Task"}
           </SubmitButton>
 
           <button
