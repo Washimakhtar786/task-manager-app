@@ -45,7 +45,11 @@ export default function DashboardLayout({
       <div className="flex flex-1 flex-col">
         
 
-        <TopHeader />
+        <TopHeader
+  onMenuClick={() =>
+    setSidebarOpen(true)
+  }
+/>
 
         <main className="flex-1 p-4 md:p-6 lg:p-8">
           {children}

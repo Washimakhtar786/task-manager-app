@@ -8,6 +8,7 @@ import {
 
 } from "../../api/adminApi.js";
 
+
 import PageHeader from "../../components/common/PageHeader.jsx";
 import Loader from "../../components/common/Loader.jsx";
 import Message from "../../components/common/Message.jsx";
@@ -15,6 +16,7 @@ import Message from "../../components/common/Message.jsx";
 import AdminStatCard from "../../components/admin/AdminStatCard.jsx";
 import AdminNavigation from "../../components/admin/AdminNavigation.jsx";
 import UserStatusBadge from "../../components/admin/UserStatusBadge.jsx";
+import DashboardLayout from "../../components/layout/DashboardLayout.jsx";
 
 export default function AdminDashboardPage() {
   const [statistics, setStatistics] =
@@ -101,7 +103,7 @@ async function handleUserStatus(user) {
   }
 
   return (
-    <>
+    <DashboardLayout>
       <PageHeader
         title="Admin Dashboard"
         description="Manage users and tasks."
@@ -287,6 +289,6 @@ async function handleUserStatus(user) {
     </table>
   </div>
 )}
-    </>
+    </DashboardLayout>
   );
 }

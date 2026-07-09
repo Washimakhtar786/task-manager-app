@@ -18,7 +18,7 @@ export default function PublicOnlyRoute() {
   if (isAuthenticated) {
     return (
       <Navigate
-        to="/"
+        to="/dashboard"
         replace
       />
     );

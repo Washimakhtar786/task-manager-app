@@ -6,11 +6,29 @@ import {
   MdLogout,
 } from "react-icons/md";
 
-import { NavLink } from "react-router-dom";
+import {
+  NavLink,
+  useNavigate,
+} from "react-router-dom";
+
 import { useAuth } from "../../context/AuthContext.jsx";
 
 export default function Sidebar() {
-  const { user, isAdmin, logout } = useAuth();
+  const {
+    user,
+    isAdmin,
+    logout,
+  } = useAuth();
+
+  const navigate = useNavigate();
+
+  function handleLogout() {
+    logout();
+
+    navigate("/", {
+      replace: true,
+    });
+  }
 
   const linkClass = ({ isActive }) =>
     `flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 ${
@@ -37,7 +55,7 @@ export default function Sidebar() {
 
       <nav className="flex-1 space-y-2 overflow-y-auto p-4">
         <NavLink
-          to="/"
+          to="/dashboard"
           end
           className={linkClass}
         >
@@ -92,7 +110,8 @@ export default function Sidebar() {
         </div>
 
         <button
-          onClick={logout}
+          type="button"
+          onClick={handleLogout}
           className="flex w-full items-center justify-center gap-2 rounded-xl bg-red-50 px-4 py-3 font-medium text-red-600 transition hover:bg-red-100"
         >
           <MdLogout size={20} />

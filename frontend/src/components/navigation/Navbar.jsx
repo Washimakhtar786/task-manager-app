@@ -1,13 +1,9 @@
 import { NavLink, useNavigate } from "react-router-dom";
-
-import { useAuth } from "../../context/AuthContext.jsx";
-
 import { useState } from "react";
 import { MdMenu } from "react-icons/md";
 
+import { useAuth } from "../../context/AuthContext.jsx";
 import MobileMenu from "./MobileMenu.jsx";
-import { useLocation } from "react-router-dom";
-
 
 function getLinkClasses({ isActive }) {
   return [
@@ -28,17 +24,7 @@ export default function Navbar() {
   const navigate = useNavigate();
 
   const [mobileMenuOpen, setMobileMenuOpen] =
-  useState(false);
-
-  const location = useLocation();
-
-const isDashboardPage = [
-  "/tasks",
-  "/profile",
-  "/admin",
-].some((path) =>
-  location.pathname.startsWith(path)
-);
+    useState(false);
 
   function handleLogout() {
     logout();
@@ -51,6 +37,8 @@ const isDashboardPage = [
   return (
     <header className="border-b border-slate-200 bg-white">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+
+        {/* Logo */}
 
         <NavLink
           to="/"
@@ -71,89 +59,38 @@ const isDashboardPage = [
           </div>
         </NavLink>
 
-        <button
-  type="button"
-  onClick={() =>
-    setMobileMenuOpen(true)
-  }
-  className="rounded-lg p-2 transition hover:bg-slate-100 md:hidden"
->
-  <MdMenu size={28} />
-</button>
+        {/* Mobile Menu - Login ke baad hi */}
 
-        <nav
-  className="hidden md:flex flex-wrap items-center gap-1"
-  aria-label="Main navigation"
->
-          {/* Home */}
-          <NavLink
-            to="/"
-            end
-            className={getLinkClasses}
-          >
-            Home
-          </NavLink>
+        {!isAuthenticated && (
+  <nav
+    className="hidden md:flex items-center gap-2"
+    aria-label="Main navigation"
+  >
+    <NavLink
+      to="/login"
+      className={getLinkClasses}
+    >
+      Login
+    </NavLink>
 
-          {!isAuthenticated ? (
-            <>
-              <NavLink
-                to="/login"
-                className={getLinkClasses}
-              >
-                Login
-              </NavLink>
-
-              <NavLink
-                to="/register"
-                className={getLinkClasses}
-              >
-                Register
-              </NavLink>
-            </>
-          ) : (
-            <>
-              <NavLink
-                to="/tasks"
-                className={getLinkClasses}
-              >
-                Tasks
-              </NavLink>
-
-              <NavLink
-                to="/profile"
-                className={getLinkClasses}
-              >
-                Profile
-              </NavLink>
-
-              {isAdmin && (
-                <NavLink
-                  to="/admin"
-                  className={getLinkClasses}
-                >
-                  Admin
-                </NavLink>
-              )}
-
-              <button
-                type="button"
-                onClick={handleLogout}
-                className="rounded-md px-3 py-2 text-sm font-medium text-red-600 transition-colors hover:bg-red-50"
-              >
-                Logout
-              </button>
-            </>
-          )}
-        </nav>
-
+    <NavLink
+      to="/register"
+      className={getLinkClasses}
+    >
+      Register
+    </NavLink>
+  </nav>
+)}
       </div>
 
-      <MobileMenu
-  open={mobileMenuOpen}
-  onClose={() =>
-    setMobileMenuOpen(false)
-  }
-/>
+      {isAuthenticated && (
+        <MobileMenu
+          open={mobileMenuOpen}
+          onClose={() =>
+            setMobileMenuOpen(false)
+          }
+        />
+      )}
     </header>
   );
 }

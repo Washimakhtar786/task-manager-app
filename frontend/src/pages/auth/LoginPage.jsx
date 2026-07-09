@@ -47,7 +47,9 @@ export default function LoginPage() {
 
       await login(formData);
 
-      navigate("/tasks");
+navigate("/dashboard", {
+  replace: true,
+});
     } catch (error) {
       setError(
         getApiErrorMessage(error)

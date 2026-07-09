@@ -14,6 +14,8 @@ import {
   deleteTask,
 } from "../../api/taskApi.js";
 
+import DashboardLayout from "../../components/layout/DashboardLayout.jsx";
+
 import PageHeader from "../../components/common/PageHeader.jsx";
 import Message from "../../components/common/Message.jsx";
 import ConfirmationModal from "../../components/common/ConfirmationModal.jsx";
@@ -55,24 +57,24 @@ export default function TasksPage() {
     useState(null);
 
   const [searchParams] =
-  useSearchParams();
-  
+    useSearchParams();
+
   const [successMessage, setSuccessMessage] =
-  useState("");
+    useState("");
 
   useEffect(() => {
-  if (!successMessage) {
-    return;
-  }
+    if (!successMessage) {
+      return;
+    }
 
-  const timeout = setTimeout(() => {
-    setSuccessMessage("");
-  }, 3000);
+    const timeout = setTimeout(() => {
+      setSuccessMessage("");
+    }, 3000);
 
-  return () => {
-    clearTimeout(timeout);
-  };
-}, [successMessage]);
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [successMessage]);
 
   async function loadTasks(status = "") {
     try {
@@ -95,103 +97,103 @@ export default function TasksPage() {
   }, [selectedStatus]);
 
   useEffect(() => {
-  if (
-    searchParams.get("updated") ===
-    "true"
-  ) {
-    setSuccessMessage(
-      "Task updated successfully."
-    );
-  }
-}, [searchParams]);
+    if (
+      searchParams.get("updated") ===
+      "true"
+    ) {
+      setSuccessMessage(
+        "Task updated successfully."
+      );
+    }
+  }, [searchParams]);
 
   async function handleCreateTask(taskData) {
-  try {
-    setCreating(true);
+    try {
+      setCreating(true);
 
-    setError("");
+      setError("");
 
-    if (editingTask) {
-      await updateTask(
-        editingTask.id,
-        taskData
+      if (editingTask) {
+        await updateTask(
+          editingTask.id,
+          taskData
+        );
+      } else {
+        await createTask(taskData);
+      }
+
+      await loadTasks(selectedStatus);
+
+      setSuccessMessage(
+        editingTask
+          ? "Task updated successfully."
+          : "Task created successfully."
       );
-    } else {
-      await createTask(taskData);
+
+      setEditingTask(null);
+
+      setShowCreateForm(false);
+    } catch (error) {
+      console.log(
+        "CREATE TASK ERROR =",
+        error.response?.data
+      );
+
+      setError(
+        editingTask
+          ? "Failed to update task."
+          : "Failed to create task."
+      );
+    } finally {
+      setCreating(false);
     }
-
-    await loadTasks(selectedStatus);
-
-    setSuccessMessage(
-      editingTask
-        ? "Task updated successfully."
-        : "Task created successfully."
-    );
-
-    setEditingTask(null);
-
-    setShowCreateForm(false);
-  } catch (error) {
-    console.log(
-      "CREATE TASK ERROR =",
-      error.response?.data
-    );
-
-    setError(
-      editingTask
-        ? "Failed to update task."
-        : "Failed to create task."
-    );
-  } finally {
-    setCreating(false);
   }
-}
 
   async function handleDeleteTask() {
-  if (!taskToDelete) {
-    return;
-  }
-
-  try {
-    setDeleting(true);
-
-    setError("");
-
-    await deleteTask(taskToDelete.id);
-
-    await loadTasks(selectedStatus);
-
-    setSuccessMessage(
-      "Task deleted successfully."
-    );
-
-    if (
-      editingTask &&
-      editingTask.id === taskToDelete.id
-    ) {
-      setEditingTask(null);
-      setShowCreateForm(false);
+    if (!taskToDelete) {
+      return;
     }
 
-    setTaskToDelete(null);
-    setShowDeleteModal(false);
-  } catch (error) {
-    console.log(
-      "DELETE ERROR =",
-      error.response?.data
-    );
+    try {
+      setDeleting(true);
 
-    setError(
-      error.response?.data?.message ||
-      "Failed to delete task."
-    );
-  } finally {
-    setDeleting(false);
+      setError("");
+
+      await deleteTask(taskToDelete.id);
+
+      await loadTasks(selectedStatus);
+
+      setSuccessMessage(
+        "Task deleted successfully."
+      );
+
+      if (
+        editingTask &&
+        editingTask.id === taskToDelete.id
+      ) {
+        setEditingTask(null);
+        setShowCreateForm(false);
+      }
+
+      setTaskToDelete(null);
+      setShowDeleteModal(false);
+    } catch (error) {
+      console.log(
+        "DELETE ERROR =",
+        error.response?.data
+      );
+
+      setError(
+        error.response?.data?.message ||
+        "Failed to delete task."
+      );
+    } finally {
+      setDeleting(false);
+    }
   }
-}
 
   return (
-    <>
+    <DashboardLayout>
       <PageHeader
         title="My Tasks"
         description="Manage and organize your daily work."
@@ -222,22 +224,22 @@ export default function TasksPage() {
       )}
 
       {loading && (
-  <Message>
-    Loading tasks...
-  </Message>
-)}
+        <Message>
+          Loading tasks...
+        </Message>
+      )}
 
-{successMessage && (
-  <Message type="success">
-    {successMessage}
-  </Message>
-)}
+      {successMessage && (
+        <Message type="success">
+          {successMessage}
+        </Message>
+      )}
 
-{!loading && error && (
-  <Message type="error">
-    {error}
-  </Message>
-)}
+      {!loading && error && (
+        <Message type="error">
+          {error}
+        </Message>
+      )}
 
       {!loading &&
         !error &&
@@ -292,6 +294,6 @@ export default function TasksPage() {
           setTaskToDelete(null);
         }}
       />
-    </>
+    </DashboardLayout>
   );
 }

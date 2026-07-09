@@ -2,11 +2,13 @@ import { useAuth } from "../context/AuthContext.jsx";
 
 import PageHeader from "../components/common/PageHeader.jsx";
 
+import DashboardLayout from "../components/layout/DashboardLayout.jsx";
+
 export default function ProfilePage() {
   const { user } = useAuth();
 
   return (
-    <>
+    <DashboardLayout>
       <PageHeader
         title="My Profile"
         description="Manage your account information."
@@ -63,6 +65,6 @@ export default function ProfilePage() {
           </div>
         </div>
       </div>
-    </>
+    </DashboardLayout>
   );
 }
