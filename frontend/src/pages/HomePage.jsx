@@ -15,7 +15,7 @@ export default function HomePage() {
         <div className="mt-10 flex justify-center gap-4">
           <Link
   to="/register"
-  className="rounded-lg bg-white px-6 py-3 font-semibold text-indigo-700 hover:bg-slate-100"
+  className="rounded-lg bg-red-500 px-8 py-3 text-3xl font-bold text-yellow-300"
 >
   Get Started
 </Link>

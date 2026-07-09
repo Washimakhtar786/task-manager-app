@@ -8,7 +8,6 @@ import { useAuth } from "../../context/AuthContext.jsx";
 import { getApiErrorMessage } from "../../utils/api-error.js";
 
 import Message from "../../components/common/Message.jsx";
-import PageHeader from "../../components/common/PageHeader.jsx";
 import FormInput from "../../components/common/FormInput.jsx";
 import SubmitButton from "../../components/common/SubmitButton.jsx";
 
@@ -18,15 +17,15 @@ export default function LoginPage() {
     password: "",
   });
 
-  const { login } = useAuth();
-
-  const navigate = useNavigate();
-
   const [loading, setLoading] =
     useState(false);
 
   const [error, setError] =
     useState("");
+
+  const { login } = useAuth();
+
+  const navigate = useNavigate();
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -47,9 +46,9 @@ export default function LoginPage() {
 
       await login(formData);
 
-navigate("/dashboard", {
-  replace: true,
-});
+      navigate("/dashboard", {
+        replace: true,
+      });
     } catch (error) {
       setError(
         getApiErrorMessage(error)
@@ -60,61 +59,81 @@ navigate("/dashboard", {
   }
 
   return (
-    <>
-      <PageHeader
-        title="Sign In"
-        description="Sign in to continue managing your tasks."
-      />
+    <div className="flex min-h-screen items-center justify-center bg-slate-50 px-6 py-10">
+      <div className="w-full max-w-md rounded-3xl bg-white p-8 shadow-xl">
+        {/* Logo */}
 
-      <div className="mx-auto max-w-md rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-        <form
-          onSubmit={handleSubmit}
-          className="space-y-5"
-        >
-          {error && (
-            <Message type="error">
-              {error}
-            </Message>
-          )}
+        <div className="mb-10 flex justify-end">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full border border-slate-200 shadow-sm">
+            <span className="text-2xl font-bold text-indigo-600">
+              T
+            </span>
+          </div>
+        </div>
 
-          <FormInput
-            label="Email Address"
-            name="email"
-            type="email"
-            value={formData.email}
-            onChange={handleChange}
-            placeholder="Enter your email"
-            required
-          />
+        {/* Heading */}
 
-          <FormInput
-            label="Password"
-            name="password"
-            type="password"
-            value={formData.password}
-            onChange={handleChange}
-            placeholder="Enter your password"
-            required
-          />
+        <h1 className="text-5xl font-extrabold text-slate-900">
+          Welcome Back 👋
+        </h1>
 
-          <SubmitButton
-            loading={loading}
-            loadingText="Signing In..."
+        <p className="mt-3 text-lg text-slate-500">
+          Sign in to continue to Task Manager.
+        </p>
+
+        <div className="mt-10">
+          <form
+            onSubmit={handleSubmit}
+            className="space-y-6"
           >
-            Sign In
-          </SubmitButton>
-        </form>
+            {error && (
+              <Message type="error">
+                {error}
+              </Message>
+            )}
 
-        <div className="mt-6 text-center text-sm text-slate-600">
-          Don't have an account?{" "}
-          <Link
-            to="/register"
-            className="font-semibold text-indigo-600 transition hover:text-indigo-700 hover:underline"
-          >
-            Register
-          </Link>
+            <FormInput
+              label="Email"
+              name="email"
+              type="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="Enter your email"
+              autoFocus
+              autoComplete="email"
+              required
+            />
+
+            <FormInput
+              label="Password"
+              name="password"
+              type="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="Enter your password"
+              autoComplete="current-password"
+              required
+            />
+
+            <SubmitButton
+              loading={loading}
+              loadingText="Signing In..."
+            >
+              Sign In
+            </SubmitButton>
+          </form>
+
+          <div className="mt-8 text-center text-base text-slate-500">
+            Don't have an account?{" "}
+            <Link
+              to="/register"
+              className="font-semibold text-indigo-600 transition hover:text-indigo-700 hover:underline"
+            >
+              Register
+            </Link>
+          </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
